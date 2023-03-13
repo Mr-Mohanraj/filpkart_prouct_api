@@ -1,0 +1,5 @@
+django
+djanorestframework
+bs4
+requests
+

@@ -1,13 +1,22 @@
 from django.urls import path
 from .views import (RegisterApiView, LoginApiView, ResetAPIView,
-                    UserApiView, RefreshAPIVew, ResetAPIView, ForgetAPIView)
+                    UserApiView, RefreshAPIVew, ResetAPIView, ForgetAPIView, ApiAccessTokenCheckApiView,ApiAccessTokenCreateApiView, ApiAccessTokenReadApiView, ApiAccessTokenDeleteApiView, ApiAccessTokenRefreshApiView)
 
 
 urlpatterns = [
-    path('register', RegisterApiView.as_view()),
-    path('login', LoginApiView.as_view()),
-    path('user', UserApiView.as_view()),
-    path('refresh', RefreshAPIVew.as_view()),
-    path('reset', ResetAPIView.as_view()),
-    path('forgot', ForgetAPIView.as_view())
+    path('user/register/', RegisterApiView.as_view()),
+    path('user/login/', LoginApiView.as_view()),
+    path('user/user/', UserApiView.as_view()),
+    path('user/refresh/', RefreshAPIVew.as_view()),
+    path('user/reset/', ResetAPIView.as_view()),
+    path('user/forgot/', ForgetAPIView.as_view()),
+    path('developer/<str:username>/create/',
+         ApiAccessTokenCreateApiView.as_view()),
+    path('developer/<str:username>/refresh/',
+         ApiAccessTokenRefreshApiView.as_view()),
+    path('developer/<str:username>/view/', ApiAccessTokenReadApiView.as_view()),
+    path('developer/<str:username>/delete/',
+         ApiAccessTokenDeleteApiView.as_view()),
+    path('api/<str:token>/password/<str:password>/',
+         ApiAccessTokenCheckApiView.as_view()),
 ]
