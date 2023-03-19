@@ -12,4 +12,4 @@ class ApiUser(models.Model):
     token_last_usage = models.DateTimeField(blank=True, null=True)
     token_delete_time = models.DateTimeField(blank=True, null=True)
     api_token_password = models.TextField(
-        max_length=150, blank=True, null=True)
+        max_length=10, blank=True, null=True)

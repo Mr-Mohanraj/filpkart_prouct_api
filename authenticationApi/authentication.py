@@ -7,6 +7,7 @@ from .models import User
 
 
 class JWTAuthentication(BaseAuthentication):
+    """Use to find the user is already register or not. based on the token in cookies inside the browsers"""
     def authenticate(self, request):
         auth = get_authorization_header(request=request).split()
 
@@ -22,6 +23,7 @@ class JWTAuthentication(BaseAuthentication):
 
 
 def create_access_token(id):
+    """Create a access token based on the user id or pk"""
     return jwt.encode({
         'user_id': id,
         'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=30),
@@ -32,6 +34,8 @@ def create_access_token(id):
 
 
 def decode_access_token(token):
+    """decode a access token to the encode user id"""
+    
     try:
         payload = jwt.decode(token, 'access_secret', algorithms=['HS256'])
 
@@ -41,6 +45,8 @@ def decode_access_token(token):
 
 
 def create_refresh_token(id):
+    """Create a refresh token for  activate the access token based on the user id or pk"""
+    
     return jwt.encode({
         'user_id': id,
         'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7),
@@ -49,6 +55,8 @@ def create_refresh_token(id):
 
 
 def decode_refresh_token(token):
+    """decode a refresh token to the user id"""
+    
     try:
         payload = jwt.decode(token, 'refresh_secret', algorithms=['HS256'])
 
