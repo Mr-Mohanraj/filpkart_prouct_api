@@ -1,23 +1,26 @@
+import string
+import random
+
+# django package imports
 from django.shortcuts import get_object_or_404
+from django.http.response import Http404
+from rest_framework import status
+from django.core.mail import send_mail
+from django.contrib.auth import login, logout
+
+# django rest framework imports
 from rest_framework.views import APIView
 from rest_framework.views import Response
 from rest_framework import exceptions
 from rest_framework.authentication import get_authorization_header
-from authenticationApi.authentication import create_refresh_token
-from authenticationApi.authentication import decode_refresh_token
+from rest_framework.permissions import IsAuthenticated
+
+# apps package import
+from authenticationApi.utils import (
+    create_access_token, decode_access_token, create_refresh_token, decode_refresh_token)
 from authenticationApi.authentication import JWTAuthentication
-from rest_framework import status
-
-from authenticationApi.authentication import create_access_token
-
 from .models import User, Reset, ApiAccessToken
 from .serializers import UserSerializer, LoginSerializer, ForgotSerializer, ResetSerializer, ApiTokenSerializer
-from django.core.mail import send_mail
-import random
-from .utils import encode_api_access_token, decode_api_access_token, random_number_generator
-
-import string
-from rest_framework.permissions import IsAuthenticated
 
 
 class RegisterApiView(APIView):
@@ -34,6 +37,9 @@ class RegisterApiView(APIView):
         serializer = UserSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        email = data["email"]
+        user = User.objects.get(email=email)
+        login(request, user)
 
         return Response(serializer.data, status.HTTP_201_CREATED)
 
@@ -43,8 +49,11 @@ class LoginApiView(APIView):
     serializer_class = LoginSerializer
 
     def post(self, request):
-        email = request.data['email']
-        password = request.data['password']
+        try:
+            email = request.data['email']
+            password = request.data['password']
+        except:
+            return Response("please enter your email and password or create a account <a href=''>register</a>")
 
         user = User.objects.filter(email=email).first()
 
@@ -97,20 +106,20 @@ class RefreshAPIView(APIView):
 
 class ForgetAPIView(APIView):
     """Forgot view for register user for access the api"""
-    serializer_class = ForgotSerializer
-    permission_classes = [IsAuthenticated]
+    # serializer_class = ForgotSerializer
+    # permission_classes = [IsAuthenticated]
 
     def post(self, request):
         email = request.data['email']
         token = ''.join(random.choice(string.ascii_lowercase +
                         string.digits) for _ in range(10))
 
-        self.serializer_class.objects.create(
+        Reset.objects.create(
             email=email,
             token=token
         )
-
-        url = 'http://127.0.0.1:8899/api/reset/' + token
+        url = request.build_absolute_uri('/')
+        url = f'{url}user/reset/{token}'
 
         send_mail(
             subject='Reset your password',
@@ -126,105 +135,30 @@ class ForgetAPIView(APIView):
 
 class ResetAPIView(APIView):
     """Reset view for register user for access the api"""
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     serializer_classes = ResetSerializer
 
     def post(self, request):
         data = request.data
-        if data['password'] != data['password_confirm']:
-            raise exceptions.APIException('Passwords do not match')
+        try:
+            if data['password'] != data['password_confirm']:
+                raise exceptions.APIException('Passwords do not match')
+        except KeyError:
+            return Response("Please enter the password and password_confirm")
 
-        user = User.objects.filter(token=data['token']).first()
+        reset = Reset.objects.filter(token=data['token']).first()
+        try:
+            user = get_object_or_404(User, email=reset.email)
+        except Http404:
+            return Response("Enter correct email id same as a register email")
 
         if not user:
             raise exceptions.APIException('Invalid link!')
 
         user.set_password(data['password'])
         user.save()
+        logout(request)
 
         return Response({
-            'message': 'success'
+            'message': 'success, Please Login again'
         })
-
-
-class ApiAccessTokenCreateApiView(APIView):
-    """Token create for access for the api viva http methods"""
-    serializer_class = ApiTokenSerializer
-    permission_classes = [IsAuthenticated]
-    authentication_classes = []
-
-    def get(self, request, username):
-        user = get_object_or_404(User, username=username)
-        num = random_number_generator()
-        data = {"user": user.pk, "luckyNumber": num}
-        token = encode_api_access_token(data, "token create")
-        pi = ApiAccessToken.objects.create(
-            user=user, token=token, TPassword=num)
-        pi.random_number = num
-        pi.save()
-        return Response({"token": token, "random number": num, "password": num}, status.HTTP_201_CREATED)
-
-
-class ApiAccessTokenRefreshApiView(APIView):
-    """Token refresh for access for the api viva http methods"""
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, username):
-        user = get_object_or_404(User, username=username)
-        num = random_number_generator()
-        data = {"user": user.pk, "luckyNumber": num}
-        token = encode_api_access_token(data, "token create")
-        pi = ApiAccessToken.objects.get(user=user.pk)
-        pi.token = token
-        pi.random_number = num
-        pi.TPassword = num
-        pi.save()
-        return Response({"result": "Token was reset successfully"}, status.HTTP_205_RESET_CONTENT)
-
-
-class ApiAccessTokenReadApiView(APIView):
-    """Token read for access for the api viva http methods"""
-
-    permission_classes = [IsAuthenticated]
-    # authentication_classes = [JWTAuthentication]
-
-    def get(self, request, username):
-        user = get_object_or_404(User, username=username)
-        pi = ApiAccessToken.objects.get(user=user.pk)
-        print(pi)
-        return Response({"token": pi.token, "password": pi.TPassword}, status.HTTP_200_OK)
-
-
-class ApiAccessTokenCheckApiView(APIView):
-    """Token check api for access for the api viva http methods"""
-
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, token, password):
-        de_token = decode_api_access_token(token)
-        user = User.objects.get(pk=de_token["user"])
-        pi = ApiAccessToken.objects.get(user=user.pk)
-        msg = "Done"
-        if not (pi.token == token):
-            msg = "Token is wrong"
-
-        if not (pi.random_number == password):
-            msg = "password is wrong"
-
-        return Response({"results": de_token, "msg": msg}, status.HTTP_200_OK)
-
-
-class ApiAccessTokenDeleteApiView(APIView):
-    """Token delete for access for the api viva http methods"""
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, username):
-        try:
-            # request.user.username
-            user = get_object_or_404(User, username=username)
-            token = ApiAccessToken.objects.get(user=user)
-            token.delete()
-        except:
-            exceptions.APIException('Invalid username')
-            return Response({"results": "deleteToken failures"}, status.HTTP_404_NOT_FOUND)
-        return Response({"results": "deleteToken Successfully"}, status.HTTP_204_NO_CONTENT)

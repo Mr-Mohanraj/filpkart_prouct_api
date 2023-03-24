@@ -1,8 +1,10 @@
 from django.urls import path
 from .views import (RegisterApiView, LoginApiView, ResetAPIView,
-                    UserApiView, RefreshAPIView, ResetAPIView, ForgetAPIView, 
-                    ApiAccessTokenCheckApiView, ApiAccessTokenCreateApiView, ApiAccessTokenReadApiView, 
-                    ApiAccessTokenDeleteApiView, ApiAccessTokenRefreshApiView)
+                    UserApiView, RefreshAPIView, ResetAPIView, ForgetAPIView)
+
+from .api_management import (ApiTokenCheckView, ApiTokenCreateView,
+                             ApiTokenDeleteView, ApiTokenReadView, ApiTokenRefreshView)
+# api_management these are inherits from the ApiView class from rest framework
 
 
 urlpatterns = [
@@ -11,14 +13,14 @@ urlpatterns = [
     path('user/user/', UserApiView.as_view()),
     path('user/refresh/', RefreshAPIView.as_view()),
     path('user/reset/', ResetAPIView.as_view()),
-    path('user/forgot/', ForgetAPIView.as_view()),
+    path('user/forget/', ForgetAPIView.as_view()),
     path('developer/<str:username>/create/',
-         ApiAccessTokenCreateApiView.as_view()),
+         ApiTokenCreateView.as_view()),
     path('developer/<str:username>/refresh/',
-         ApiAccessTokenRefreshApiView.as_view()),
-    path('developer/<str:username>/view/', ApiAccessTokenReadApiView.as_view()),
+         ApiTokenRefreshView.as_view()),
+    path('developer/<str:username>/view/', ApiTokenReadView.as_view()),
     path('developer/<str:username>/delete/',
-         ApiAccessTokenDeleteApiView.as_view()),
+         ApiTokenDeleteView.as_view()),
     path('api/<str:token>@<str:password>/',
-         ApiAccessTokenCheckApiView.as_view()),
+         ApiTokenCheckView.as_view()),
 ]

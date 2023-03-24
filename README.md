@@ -20,6 +20,7 @@ Flipkart product list API (Not officially):
 * Second, use the `developer/*` endpoint to create an API access token.
 
 * third, use the api/`Your API token@api token password`/search?q=`your search query here`
+    `Like this: http://localhost:8000/api/token@password/search?q=iphone&all=true here true is a case sensitive`
 
 ## Endpoints and HTTP Methods
 
@@ -38,19 +39,17 @@ Flipkart product list API (Not officially):
 |api/<str:token>@<str:password>/| post    |
 |api/<str:token>@<str:password>/search/|get   |
 
-### query variable and their default values on `api/<str:token>@<str:password>/search/` endpoint
-
-`
+### query variable and their default values on **api/<str:token>@<str:password>/search/** endpoint
 
 {
-    "q": "redmi", Return name of the product.
-    "product_length": 10, Return the first number of product.
-    "data": False, If true, Return all only name of the q variable value.
-    "based_price": True, Return only price for first product_length value.
-    "all": False, Return all product form database.
-}
 
-`
+* "q": "redmi", Return name of the product.
+* "product_length": 10, Return the first number of product.
+* "data": False, If true, Return all only name of the q variable value.
+* "based_price": True, Return only price for first product_length value.
+* "all": False, Return all product form database.
+
+}
 
 ## Inside Apps
 

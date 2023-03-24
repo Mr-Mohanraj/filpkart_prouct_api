@@ -5,7 +5,7 @@ from .models import User,Reset, ApiAccessToken
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'password']
+        fields = ['id','username', 'email', 'password']
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -29,7 +29,7 @@ class LoginSerializer(serializers.ModelSerializer):
 class ForgotSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reset
-        fields = ["id", "email", "token"]
+        fields = ["id", "email"]
 
 class ResetSerializer(serializers.Serializer):
     password_confirm = serializers.CharField()

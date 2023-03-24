@@ -26,9 +26,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -43,13 +43,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'django.contrib.sites',
-    # 'drf_spectacular',
+    'drf_spectacular',
     'authenticationApi',
-    # 'social_django',
     'productApi',
 ]
 AUTH_USER_MODEL = 'authenticationApi.User'
-# settings.py
+
+
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",
@@ -58,21 +58,21 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ],
-    # "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 # DRF Spectacular Settings
-# SPECTACULAR_SETTINGS = {
-#     "TITLE": "Test APIs",
-#     "DESCRIPTION": "Various APIs for Test service",
-#     "VERSION": "1.0.0",
-#     # "PREPROCESSING_HOOKS": ["spectacular.hooks.remove_apis_from_list"],
-#     # Custom Spectacular Settings
-#     # "EXCLUDE_PATH": [reverse_lazy("schema")],
-# }
-# SWAGGER_SETTINGS = {
-#     'JSON_EDITOR': True,
-# }
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Test APIs",
+    "DESCRIPTION": "Various APIs for Test service",
+    "VERSION": "1.0.0",
+    # "PREPROCESSING_HOOKS": ["spectacular.hooks.remove_apis_from_list"],
+    # Custom Spectacular Settings
+    # "EXCLUDE_PATH": [reverse_lazy("schema")],
+}
+SWAGGER_SETTINGS = {
+    'JSON_EDITOR': True,
+}
 
 
 MIDDLEWARE = [
@@ -153,29 +153,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+CORS_ORIGIN_ALLOW_ALL = True
 
-CSRF_TRUSTED_ORIGINS = ["http://*.railway.app"]
-
-
-CORS_ORIGIN_ALLOW_ALL= True
 CORS_ALLOW_CREDENTIALS = True
-
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = os.environ.get("host_mail")
-EMAIL_HOST_PASSWORD  = os.environ.get("host_mail_password")
-# LOGIN_URL = ''
-# LOGIN_REDIRECT_URL = 'home'
-# LOGOUT_URL = 'logout'
-# LOGOUT_REDIRECT_URL = 'login'
+LOGIN_URL = ''
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_URL = 'logout'
+LOGOUT_REDIRECT_URL = 'login'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ""
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ""
