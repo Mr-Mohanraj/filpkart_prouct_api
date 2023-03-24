@@ -168,7 +168,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-CSRF_TRUSTED_ORIGINS = ["http://*.railway.app"]
+CSRF_TRUSTED_ORIGINS = ["http://*.railway.app","https://flipkartproductapi-production.up.railway.app/"]
 
 
 CORS_ORIGIN_ALLOW_ALL= True
