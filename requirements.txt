@@ -1,7 +1,6 @@
 django
-djanorestframework
+djangorestframework
 bs4
 requests
-drf_yasg
 gunicorn
 python_dotenv
