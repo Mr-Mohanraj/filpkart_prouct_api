@@ -2,7 +2,7 @@ django
 djangorestframework
 bs4
 requests
-# gunicorn
+gunicorn
 python_dotenv
 PyJWT
 django-cors-headers
