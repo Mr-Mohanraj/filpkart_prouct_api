@@ -53,5 +53,7 @@ class ProductListApi(APIView):
                     return Response(get_data_dict(data_want), status.HTTP_200_OK)
                 else:
                     return Response({"msg": data[0]}, status.HTTP_400_BAD_REQUEST)
-        except:
-            return Response({"msg": data[0], "error_msg":"check the token or query variables "}, status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(e)
+            data_want = ("search_name", "product_length", "data", "based_price", "all (default=Flase)")
+            return Response({"msg": data[0], "error_msg":f"check the token or query variables, query variable are {data_want}, search_name and value must be given"}, status.HTTP_400_BAD_REQUEST)

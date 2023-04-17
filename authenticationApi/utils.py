@@ -9,7 +9,7 @@ def create_access_token(id):
     """Create a access token based on the user id or pk"""
     return jwt.encode({
         'user_id': id,
-        'exp': datetime.datetime.utcnow() + datetime.timedelta(days=5),
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1),
         'iat': datetime.datetime.utcnow()
     }, 'access_secret', algorithm='HS256')
 

@@ -12,7 +12,7 @@ urlpatterns = [
     path('user/login/', LoginApiView.as_view()),
     path('user/user/', UserApiView.as_view()),
     path('user/refresh/', RefreshAPIView.as_view()),
-    path('user/reset/', ResetAPIView.as_view()),
+    path('user/reset/<str:token>/', ResetAPIView.as_view()),
     path('user/forget/', ForgetAPIView.as_view()),
     path('developer/<str:username>/create/',
          ApiTokenCreateView.as_view()),

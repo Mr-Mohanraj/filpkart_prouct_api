@@ -40,7 +40,7 @@ class ApiTokenCreateView(APIView):
             user=user, token=token, TPassword=num)
         pi.random_number = num
         pi.save()
-        return Response({"token": token, "random number": num, "password": num, "msg": "every 5 days once refresh please me! You faithfully API"}, status.HTTP_201_CREATED)
+        return Response({"token": token,"password": num, "msg": "every 5 days once refresh please me! You faithfully API"}, status.HTTP_201_CREATED)
 
 
 class ApiTokenRefreshView(APIView):
@@ -57,7 +57,7 @@ class ApiTokenRefreshView(APIView):
         pi.random_number = num
         pi.TPassword = num
         pi.save()
-        return Response({"result": "Token was reset successfully"}, status.HTTP_205_RESET_CONTENT)
+        return Response({"result": "Token was reset successfully","new token": token, "new password": num, "msg": "every 5 days once refresh please me! You faithfully API"}, status.HTTP_205_RESET_CONTENT)
 
 
 class ApiTokenReadView(APIView):
@@ -81,15 +81,20 @@ class ApiTokenCheckView(APIView):
     def get(self, request, token, password):
         de_token = decode_api_access_token(token)
         user = User.objects.get(pk=de_token["user"])
-        pi = ApiAccessToken.objects.get(user=user.pk)
-        msg = "Done"
+        
+        try:
+            pi = ApiAccessToken.objects.get(user=user.pk)
+        except:
+            return Response({"Msg":f"please create api token user developer/{user.username}/create endpoint"})
+        
+        msg = "No Error"
         if not (pi.token == token):
             msg = "Token is wrong"
 
         if not (pi.random_number == password):
             msg = "password is wrong"
 
-        return Response({"results": de_token, "msg": msg}, status.HTTP_200_OK)
+        return Response({"error msg": msg , "success msg":"token work as we except"}, status.HTTP_200_OK)
 
 
 class ApiTokenDeleteView(APIView):

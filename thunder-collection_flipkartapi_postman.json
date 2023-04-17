@@ -1,0 +1,87 @@
+{
+    "info": {
+        "name": "flipkartapi",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "description": ""
+    },
+    "item": [
+        {
+            "name": "home",
+            "request": {
+                "method": "GET",
+                "url": {
+                    "raw": "http://localhost:8000/",
+                    "path": [
+                        ""
+                    ],
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8000"
+                }
+            }
+        },
+        {
+            "name": "register",
+            "request": {
+                "method": "POST",
+                "url": {
+                    "raw": "http://localhost:8000/user/register/",
+                    "path": [
+                        "user",
+                        "register"
+                    ],
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8000"
+                },
+                "body": {
+                    "mode": "raw",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    },
+                    "raw": "{\n    \"email\":\"mark@gmail.com\",\n    \"username\":\"mark\",\n    \"password\":\"markmark\"\n}"
+                }
+            }
+        },
+        {
+            "name": "login",
+            "request": {
+                "method": "GET",
+                "url": {
+                    "raw": "http://localhost:8000/",
+                    "path": [
+                        ""
+                    ],
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8000"
+                }
+            }
+        },
+        {
+            "name": "users",
+            "request": {
+                "method": "GET",
+                "url": {
+                    "raw": "http://localhost:8000/",
+                    "path": [
+                        ""
+                    ],
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8000"
+                }
+            }
+        }
+    ]
+}

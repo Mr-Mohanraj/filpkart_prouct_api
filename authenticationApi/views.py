@@ -26,27 +26,32 @@ from .serializers import UserSerializer, LoginSerializer, ForgotSerializer, Rese
 class RegisterApiView(APIView):
     """Register view for register user for access the api"""
     serializer_class = UserSerializer
+    permission_classes = ()
+    authentication_classes = ()
 
     def post(self, request):
         data = request.data
         try:
+            print(data['password'] != data['password_confirm'])
             if data['password'] != data['password_confirm']:
                 raise exceptions.APIException('Password do not match!')
-        except:
-            print("please enter your password")
-        serializer = UserSerializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        email = data["email"]
-        user = User.objects.get(email=email)
-        login(request, user)
-
+            serializer = UserSerializer(data=data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            email = data["email"]
+            user = User.objects.get(email=email)
+            login(request, user)
+        except Exception as e:
+            print(e)
+            return Response({"error":str(e)}, status.HTTP_400_BAD_REQUEST)
         return Response(serializer.data, status.HTTP_201_CREATED)
 
 
 class LoginApiView(APIView):
     """Login view for register user for access the api"""
     serializer_class = LoginSerializer
+    permission_classes = ()
+    authentication_classes = ()
 
     def post(self, request):
         try:
@@ -108,9 +113,14 @@ class ForgetAPIView(APIView):
     """Forgot view for register user for access the api"""
     # serializer_class = ForgotSerializer
     # permission_classes = [IsAuthenticated]
-
+    permission_classes = ()
+    authentication_classes = ()
+    
     def post(self, request):
-        email = request.data['email']
+        try:
+            email = request.data['email']
+        except:
+            return Response("Enter your login email address")
         token = ''.join(random.choice(string.ascii_lowercase +
                         string.digits) for _ in range(10))
 
@@ -129,7 +139,7 @@ class ForgetAPIView(APIView):
         )
 
         return Response({
-            'message': 'success'
+            'message': f'success and url send to the your {email} address'
         })
 
 
@@ -137,20 +147,22 @@ class ResetAPIView(APIView):
     """Reset view for register user for access the api"""
     # permission_classes = [IsAuthenticated]
     serializer_classes = ResetSerializer
-
-    def post(self, request):
+    permission_classes = ()
+    authentication_classes = ()
+    
+    def post(self, request, token):
         data = request.data
         try:
-            if data['password'] != data['password_confirm']:
+            if data['new_password'] != data['password_confirm']:
                 raise exceptions.APIException('Passwords do not match')
         except KeyError:
-            return Response("Please enter the password and password_confirm")
+            return Response("Please enter the new_password and password_confirm")
 
-        reset = Reset.objects.filter(token=data['token']).first()
+        reset = Reset.objects.filter(token=token).first()
         try:
             user = get_object_or_404(User, email=reset.email)
         except Http404:
-            return Response("Enter correct email id same as a register email")
+            return Response("your get token email is not register email, please get reset token as register email")
 
         if not user:
             raise exceptions.APIException('Invalid link!')

@@ -14,7 +14,7 @@ def get_data_dict(data_want: dict):
             if data_want["search_name"] in pro['productname']:
                 data.append(pro)
         if data_want["all"]:
-            return {"numberOf": len(data), "product_data": data}
+            return {"numberOf": len(data), "product_data": simpledata}
 
         if length <= len(data):
             if data_want["data"]:
